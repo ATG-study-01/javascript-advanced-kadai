@@ -1,6 +1,7 @@
 // 変数の初期化
 let untyped = '';
 let typed = '';
+let score = 0
 
 // HTML要素を取得
 const untypedfield = document.getElementById('untyped');
@@ -8,6 +9,7 @@ const typedfield = document.getElementById('typed');
 const wrap = document.getElementById('wrap');
 const start = document.getElementById('start');
 const count = document.getElementById('count');
+const typedcount = document.getElementById('typedcount');
 
 // ランダムなテキストの配列
 const textLists = [
@@ -27,7 +29,7 @@ const textLists = [
 ];
 
 // ランダムでテキスト生成
-const createText  = () => {
+const createText = () => {
 
  typed = '';
  typedfield.textContent = typed;
@@ -43,7 +45,7 @@ const keyPress = e => {
  // 間違ってたら背景赤にして処理終了
  if (e.key !== untyped.substring(0, 1)) {
   wrap.classList.add('mistyped');
-  // 100s秒後に背景色を元に戻す
+  // 100ms秒後に背景色を元に戻す
   setTimeout(() => {
    wrap.classList.remove('mistyped');
   }, 100);
@@ -51,10 +53,12 @@ const keyPress = e => {
  }
 
  // そうでなければ（合っていれば）1文字送って次の文字を取得
+  score++;
   typed += untyped.substring(0, 1);
   untyped = untyped.substring(1);
   typedfield.textContent = typed;
   untypedfield.textContent = untyped;
+  typedcount.textContent = score;
 
  if(untyped === '') {
   createText();
@@ -62,12 +66,30 @@ const keyPress = e => {
 };
 
 // ランク判定
-const rank = () => {};
+const rankCheck = score => {
+
+  let text = '';
+
+  if (score < 100) {
+    text = `あなたのランクはCです。\nBランクまであと${100 - score}文字です。`;
+} else if(score < 200) {
+    text = `あなたのランクはBです。\nAランクまであと${200 - score}文字です。`;
+} else if(score < 300) {
+    text = `あなたのランクはAです。\nSランクまであと${300 - score}文字です。`;
+} else if(score >= 300) {
+    text = `あなたのランクはSです。\nおめでとうございます！`;
+}
+
+return `${score}文字打てました！\n${text}\n【OK】リトライ【キャンセル】終了`;
+};
 
 // ゲーム終了
 const gameOver = id => {
  clearInterval(id);
- console.log('ゲーム終了！')
+ const result = confirm(rankCheck(score));
+  if (result == true) {
+    window.location.reload();
+  }
 };
 
 // カウントダウンタイマー
@@ -86,11 +108,7 @@ const timer = () => {
   }
  }, 1000);
 
- console.log('setIntervalの戻り値(ID):', id);
- console.log('型:', typeof id);
 };
-
-// 現在のタイプ数を表示
 
 // キーボードのイベント処理
 start.addEventListener('click', () => {
