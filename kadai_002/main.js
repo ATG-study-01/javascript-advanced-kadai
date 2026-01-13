@@ -92,13 +92,12 @@ const gameOver = id => {
 	typedfield.classList.add('finish');
 
 	// ゲーム終了から10秒後にダイアログで結果表示
- setTimeout(() => {
-	const result = confirm(rankCheck(score));
-	}, 10000);
-
-		if (result == true) {
-    window.location.reload();
-  }
+  setTimeout(() => {
+	  const result = confirm(rankCheck(score));
+    if (result == true) {
+      window.location.reload();
+    }
+	}, 10);
 };
 
 // カウントダウンタイマー
